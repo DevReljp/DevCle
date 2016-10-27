@@ -5,3 +5,5 @@ server.js
 .gulp-cache
 public/js
 public/css/
+!src/controllers
+!src/routes
