@@ -1,3 +1,4 @@
 exports.index = function(req, res) {
-  res.render('index');
+  console.log('req.session.currentUser', req.session.currentUser);
+  res.render('index', {currentUser: req.session.currentUser});
 }

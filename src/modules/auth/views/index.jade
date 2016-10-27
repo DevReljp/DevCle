@@ -8,14 +8,22 @@ html
     link(rel="stylesheet", type="text/css", href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css")
   body
     .container
-      if currentUser
-        p= currentUser.userId
-        
-      h1 Works!
-
+      div.row
+        div.col-md-8.col-md-offset-2
+          h1 Hi 2!
+          form#login
+            div.form-group
+              label User ID
+                input.form-control(type="text", name="userId")
+            div.form-group
+              label Password
+                input.form-control(type="password", name="password")
+            button.btn.btn-default(type="submit") Login
+                
 
     <!--[if IE]><!-->
     <script src="https://www.promisejs.org/polyfills/promise-6.1.0.min.js"></script>
     <!--<![endif]-->
 
     script(src="/js/app.js")
+    script(src="/modules/auth/app.js")
