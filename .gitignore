@@ -1,0 +1,7 @@
+.DS_Store
+controllers/
+routes/
+server.js
+.gulp-cache
+public/js
+public/css/
