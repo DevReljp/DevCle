@@ -35,6 +35,7 @@ class AuthController {
   
   destroy(req, res, next) {
     delete req.session['currentUser'];
+    
     res.status(200).json({});
   }
 }
