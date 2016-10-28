@@ -12,5 +12,8 @@
   "dependencies": {
     "connect-nedb-session": "0.0.3",
     "express-session": "^1.14.1"
+  },
+  "devDependencies": {
+    "gulp-live-server": "0.0.30"
   }
 }

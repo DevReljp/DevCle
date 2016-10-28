@@ -5,6 +5,7 @@ import uglify from 'gulp-uglify'
 import plumber from 'gulp-plumber'
 import browserify from 'browserify'
 import source from 'vinyl-source-stream'
+import gls from 'gulp-live-server'
 
 var buffer = require('vinyl-buffer');
 var sourcemaps = require('gulp-sourcemaps');
@@ -42,12 +43,13 @@ gulp.task('js', function() {
   .pipe(gulp.dest("./public/js/")); // 生成先の指定
 });
 
+
 gulp.task('debugserver', function() {
-  livereload.listen();
+livereload.listen();
 
   nodemon({
-    exec: 'node-inspector --web-port 3002 & node --debug',
-    script: './server.js',
+    exec: 'node --inspect --debug-brk --debug',
+    script: 'server.js',
     ext: 'js, json',
     task: ['compile'],
     ignore: [   // nodemon ignore directory

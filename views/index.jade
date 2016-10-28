@@ -10,12 +10,16 @@ html
     .container
       if currentUser
         p= currentUser.userId
-        
+        p
+          a.btn.btn-default#logout(href='#') Logout
+      else
+        p
+          a.btn.btn-default#login(href='/auth/new') Login
       h1 Works!
-
 
     <!--[if IE]><!-->
     <script src="https://www.promisejs.org/polyfills/promise-6.1.0.min.js"></script>
     <!--<![endif]-->
 
     script(src="/js/app.js")
+    script(src="/modules/auth/app.js")

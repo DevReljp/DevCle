@@ -13,5 +13,18 @@ $(function() {
     function(err) {
       console.error(err);
     })
+  });
+  $("#logout").on('click', function(e) {
+    e.preventDefault();
+    $.ajax({
+      url: '/auth',
+      type: 'DELETE'
+    })
+    .then(function(data) {
+      location.href = "/";
+    },
+    function(err) {
+      console.error(err);
+    })
   })
 });
