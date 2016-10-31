@@ -8,6 +8,10 @@ router.all('*',  (req, res, next) => {
   controller.all(req, res, next);
 });
 
+router.get('/', (req, res, next) => {
+  controller.index(req, res, next);
+});
+
 router.get('/new', (req, res, next) => {
   controller.new(req, res, next);
 });

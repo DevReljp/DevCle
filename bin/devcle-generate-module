@@ -1,0 +1,84 @@
+#!/usr/bin/env node
+let inquirer = require("inquirer");
+var fs = require('fs-extra');
+require('../libs/common');
+
+/*
+var program = require('commander');
+program
+  .version('0.0.1')
+  .parse(process.argv);
+*/
+
+let module_name = process.argv[2];
+var templates = require('./templates')(module_name);
+
+// Check directory
+if (module_name.slice(-1) != '/') {
+  module_name = module_name + "/";
+}
+var path = `${__dirname}/../src/modules/${module_name}`
+
+var questions = [];
+var promises = [];
+
+promises.push(new Promise((res, rej) => {
+  fs.access(path, 'wx', (err, fd) => {
+    if (err == null) {
+      return res({
+        type: 'confirm',
+        name: 'overwrite',
+        message: `Directory ${module_name} exist. Could you overwrite it?`,
+        default: true
+      });
+    }
+    return res(null)
+  });
+}));
+
+let paths = ['index.js', 'controller.js', 'public/app.js', 'public/app.css', 'views/new.jade', 'views/edit.jade'];
+for (var i in paths) {
+  promises.push(new Promise((res, rej) => {
+    var filename = paths[i];
+    fs.access(`${path}${filename}`, 'wx', (err, fd) => {
+      if (err == null) {
+        return res({
+          type: 'confirm',
+          name: `overwrite_${filename}`,
+          message: `Directory ${module_name}${filename} exist. Could you overwrite it?`,
+          default: true
+        });
+      }
+      return res(null)
+    });
+  }));
+}
+
+Promise.all(promises).then((values) => {
+  questions = values.filter(function(question) {
+    return question != null;
+  });
+  
+  if (questions.length === 0) {
+    return createBase();
+  }
+  inquirer.prompt(questions).then((answers) => {
+    if (!answers.overwrite) {
+      process.exit(1);
+    }
+    createBase(answers);
+  });
+});
+
+
+createBase = (answers = {}) => {
+  fs.mkdirsSync(path);
+  fs.mkdirsSync(`${path}views`);
+  fs.mkdirsSync(`${path}public`);
+  for (var i in paths) {
+    var filename = paths[i];
+    if (answers[`overwrite_${filename}`] !== false) {
+      fs.writeFileSync(`${path}${filename}`, templates[filename]);
+    }
+  }
+}

@@ -1,7 +1,20 @@
 $(function() {
+  $.ajax({
+    url: '/auth'
+  })
+    .then((data) => {
+      $('.dc-userId').text(data.userId);
+      if (data === '') {
+        $('.no-signin').show();
+        $('.signined').hide();
+      }else{
+        $('.no-signin').hide();
+        $('.signined').show();
+      }
+    })
   $("form#login").on("submit", function(e) {
     e.preventDefault();
-    data = $(this).serialize();
+    var data = $(e.target).serialize();
     $.ajax({
       url: '/auth',
       type: 'POST',
@@ -14,7 +27,7 @@ $(function() {
       console.error(err);
     })
   });
-  $("#logout").on('click', function(e) {
+  $("#signout").on('click', function(e) {
     e.preventDefault();
     $.ajax({
       url: '/auth',

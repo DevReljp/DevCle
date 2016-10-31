@@ -29,8 +29,16 @@ class Plugins {
     var results = [];
     for (var i in this.plugins) {
       var plugin = this.plugins[i];
-      if (plugin.role == role) {
-        results.push(plugin);
+      if (Array.isArray(plugin)) {
+        for (var j in plugin) {
+          if (plugin[j].role == role) {
+            results.push(plugin[j]);
+          }
+        }
+      } else {
+        if (plugin.role == role) {
+          results.push(plugin);
+        }
       }
     }
     return results;

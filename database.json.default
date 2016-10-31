@@ -1,0 +1,18 @@
+{
+  "dev": {
+    "driver": "mysql",
+    "user": "app",
+    "password": "app"
+  },
+
+  "test": {
+    "driver": "sqlite3",
+    "filename": ":memory:"
+  },
+
+  "production": {
+    "driver": "mysql",
+    "user": "root",
+    "password": "root"
+  }
+}

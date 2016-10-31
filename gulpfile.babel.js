@@ -13,6 +13,7 @@ var nodemon = require('gulp-nodemon');
 var livereload = require('gulp-livereload');
 var Cache = require('gulp-file-cache');
 var babel = require('gulp-babel')
+var sourcemaps = require('gulp-sourcemaps');
 
 var cache = new Cache();
 
@@ -45,22 +46,20 @@ gulp.task('js', function() {
 
 
 gulp.task('debugserver', function() {
-livereload.listen();
-
+  livereload.listen();
   nodemon({
-    exec: 'node --inspect --debug-brk --debug',
+    exec: 'node --inspect --debug',
     script: 'server.js',
-    ext: 'js, json',
-    task: ['compile'],
+    ext: 'js, json, jade, css',
+    task: ['compile', 'copy'],
     ignore: [   // nodemon ignore directory
       'views',
-      'public',
       'clientsrc'
     ],
     env: {
       'NODE_ENV': 'development'
     },
-    stdout: false
+    stdout: true
   }).on('readable', function() {
     this.stdout.on('data', function(chunk) {
       if (/^application\ started/.test(chunk)) {
@@ -78,6 +77,8 @@ livereload.listen();
 gulp.task('watch', function() {
   gulp.watch(["./clientsrc/js/**/*.js"], ["js"]);
   gulp.watch(["./clientsrc/sass/**/*.scss"], ["sass", "js"]); // jsでcssをrequireしているのでjsも実行する
+  gulp.watch(["./src/**/*.{jade,css}"], ["copy"]);
+  gulp.watch(["./src/**/*.js"], ["compile"]);
   gulp.watch(["./public/**/*.*", "./views/**/*.*"], function(e) {
     livereload.changed(e);
   });
@@ -92,8 +93,17 @@ gulp.task('compile', function () {
   return stream // important for gulp-nodemon to wait for completion
 })
 
+gulp.task('copy', function () {
+  var stream = gulp.src('./src/**/*.{jade,css}') // your ES2015 code
+                   .pipe(cache.filter()) // remember files
+                   .pipe(cache.cache()) // cache them
+                   .pipe(gulp.dest('./')) // write them
+  return stream // important for gulp-nodemon to wait for completion
+})
+
 gulp.task("default", [
   'compile',
+  'copy',
   'debugserver',
   'sass',
   'js',

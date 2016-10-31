@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    title Register
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    link(rel="stylesheet", type="text/css", href="/users/app.css")
+  body
+    div.container
+      div.row
+        div.col-md-8.col-md-offset-2
+          h1 Sign up
+          form#register
+            div.form-group
+              label User ID
+                input.form-control(type="text", name="userId")
+            div.form-group
+              label Password
+                input.form-control(type="password", name="password")
+            button.btn.btn-default(type="submit") Register
+      
+    script(src="/js/app.js")
+    script(src="/users/app.js")

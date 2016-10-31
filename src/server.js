@@ -7,8 +7,7 @@ var app               = express();
 var bodyParser        = require('body-parser');
 var session           = require('express-session');
 var path              = require('path');
-var routes            = require('./routes/routes');  
-var fs                = require('fs');
+var fs                = require('fs-extra');
 var session = require('express-session');
 var NedbStore = require('connect-nedb-session')(session)
 var config            = require('./config');
@@ -39,48 +38,42 @@ app.use(session({
   })
 }));
 
-// session
-app.use(session({secret: "adsfajfpoaf0jomvaosdoci"}));
-
 // =======================
 // routes
 // =======================
 
-
-fs.readdir(`${__dirname}/modules`, (error, files) => {
-  for (var i in files) {
-    let dir = files[i];
-    if (dir.indexOf('.') == 0) {
-      continue;
-    }
-    var lib = require(`${__dirname}/src/modules/${dir}`);
-    app.use(`/${dir}`, lib.router);
-    var paths = [
-      {
-        original: `${__dirname}/src/modules/${dir}/public`,
-        symlink: `${__dirname}/public/modules/${dir}`
-      },
-      /*
-      {
-        original: `${__dirname}/src/modules/${dir}/views`,
-        symlink: `${__dirname}/views/${dir}`
-      }
-      */
-    ];
-    for (var i in paths) {
-      var path = paths[i];
-      if (!fs.existsSync(path.original)) {
+var addRouter = (app, path) => {
+  fs.readdir(path, (error, files) => {
+    for (var i in files) {
+      let dir = files[i];
+      if (dir.indexOf('.') == 0)
         continue;
+      if (fs.statSync(`${path}/${dir}`).isFile())
+        continue;
+      if (['public', 'views'].indexOf(dir) > 0)
+        continue;
+      
+      if (fs.existsSync(`${path}/${dir}/index.js`)) {
+        var lib = require(`${path}/${dir}`);
+        let url_path = path.replace(`${__dirname}/modules`, "") + `/${dir}`;
+        console.log("Add rountes", url_path)
+        app.use(`${url_path}`, lib.router);
+        if (fs.existsSync(`${path}/${dir}/public`)) {
+          console.log("Public directory", `${path}/${dir}/public`, ". Access from browser", url_path);
+          app.use(`${url_path}/`, express.static(`${path}/${dir}/public`));
+        }
       }
-      if (!fs.existsSync(path.symlink)) {
-        fs.symlinkSync(path.original, path.symlink);
-      }
+      addRouter(app, `${path}/${dir}`);
     }
-  }
-});
+  });
+}
+// Root access.
 
 
-app.use('/', routes);
+app.use('/', require(`${__dirname}/modules`).router);
+app.use('/', express.static(`${__dirname}/modules/public`));
+
+addRouter(app, `${__dirname}/modules`);
 
 // =======================
 // start the server

@@ -12,3 +12,5 @@ tmp/
 /public/
 /modules/
 /libs/
+database.json
+config.js

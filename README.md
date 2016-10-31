@@ -115,6 +115,13 @@ module.exports = User;
 
 DevCle have created by ES6(ES2015). You can use Class, template string, let/const or any ES6 features.
 
+### Development note
+
+```
+cd node_modules/transformers
+$ npm install marked --save
+```
+
 ### LICENSE
 
 MIT License
